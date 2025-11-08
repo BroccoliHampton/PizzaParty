@@ -1,5 +1,6 @@
 // js/walletProvider.js
 // Simplified wallet provider
+// NO CHANGES NEEDED FOR RESKIN
 
 import FarcasterSDK from 'https://esm.sh/@farcaster/miniapp-sdk';
 
