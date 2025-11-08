@@ -8,19 +8,19 @@ export let blockchainData = {
     priceInEth: '0.0',
     currentDps: '0',
     currentDpsFormatted: '0',
-    userDonutBalance: '0',
-    userDonutBalanceFormatted: '0',
+    userPizzaBalance: '0',
+    userPizzaBalanceFormatted: '0',
     userEthBalance: '0',
     userEthBalanceFormatted: '0',
-    claimableDonuts: '0',
-    claimableDonutsFormatted: '0',
-    totalDonutSupply: '0',
-    totalDonutSupplyFormatted: '0',
+    claimablePizzas: '0',
+    claimablePizzasFormatted: '0',
+    totalPizzaSupply: '0',
+    totalPizzaSupplyFormatted: '0',
     timeAsMiner: 0,
     secondsUntilHalving: 0,
     userAddress: null,
     fid: null,
-    blaze: {
+    party: { // Renamed from 'blaze'
         epochId: 0,
         price: '0',
         priceFormatted: '0',
@@ -36,5 +36,5 @@ export let blockchainData = {
 export let uiState = {
     isDarkMode: false,
     isSfxMuted: false,
-    isGlazeView: true,
+    isBakeView: true, // Renamed from 'isGlazeView'
 };
