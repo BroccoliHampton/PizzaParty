@@ -24,32 +24,32 @@ const formatTime = (seconds) => {
  */
 export function cacheDOMElements() {
     return {
-        glazery: {
-            kingStatus: document.getElementById('bakery-king-status'),
-            cps: document.getElementById('bakery-cps'),
-            baked: document.getElementById('bakery-baked'),
-            actionButton: document.getElementById('bakery-action-button'),
-            canvas: document.getElementById('cookie-canvas'),
-            rainContainer: document.getElementById('cookie-rain-container'),
-            glazeColorButton: document.getElementById('glaze-color-button'),
-            sprinkleColorButton: document.getElementById('sprinkle-color-button'),
-            donutBaseColorButton: document.getElementById('donut-base-color-button'),
-            zoomSlider: document.getElementById('glazery-zoom-slider'),
-            donutBalance: document.getElementById('player-donut-balance'),
-            glazePrice: document.getElementById('glaze-price-display'),
+        pizzeria: { // Renamed from 'glazery'
+            kingStatus: document.getElementById('pizzeria-chef-status'),
+            pps: document.getElementById('pizzeria-pps'), // Renamed from 'cps'
+            baked: document.getElementById('pizzeria-baked-time'), // Renamed from 'baked'
+            actionButton: document.getElementById('pizzeria-action-button'),
+            canvas: document.getElementById('pizza-canvas'),
+            rainContainer: document.getElementById('pizza-slice-container'), // Renamed from 'cookie-rain-container'
+            sauceColorButton: document.getElementById('sauce-color-button'), // Renamed
+            toppingColorButton: document.getElementById('topping-color-button'), // Renamed
+            crustColorButton: document.getElementById('crust-color-button'), // Renamed
+            zoomSlider: document.getElementById('pizzeria-zoom-slider'),
+            donutBalance: document.getElementById('player-pizza-balance'), // Renamed ID
+            glazePrice: document.getElementById('bake-price-display'), // Renamed ID
             availableBalance: document.getElementById('available-balance-display'),
             totalSupply: document.getElementById('total-supply-display'),
-            currentDps: document.getElementById('current-dps-display'),
+            currentDps: document.getElementById('current-pps-display'), // Renamed ID
             
             toggleButton: document.getElementById('view-toggle-button'),
-            glazeContainer: document.getElementById('glaze-container'),
-            blazeContainer: document.getElementById('blaze-container'),
-            glazeDpsDisplay: document.getElementById('glaze-dps-display'),
+            glazeContainer: document.getElementById('bake-container'), // Renamed ID
+            blazeContainer: document.getElementById('party-container'), // Renamed ID
+            glazeDpsDisplay: document.getElementById('bake-pps-display'), // Renamed ID
 
-            blazePrice: document.getElementById('blaze-price-display'),
-            blazeAvailableBalance: document.getElementById('blaze-available-balance-display'),
-            blazeActionButton: document.getElementById('blaze-action-button'),
-            blazeClaimAmount: document.getElementById('blaze-claim-amount'),
+            blazePrice: document.getElementById('party-price-display'), // Renamed ID
+            blazeAvailableBalance: document.getElementById('party-available-balance-display'), // Renamed ID
+            blazeActionButton: document.getElementById('party-action-button'), // Renamed ID
+            blazeClaimAmount: document.getElementById('party-claim-amount'), // Renamed ID
         },
         profileName: document.getElementById('player-profile-name'),
         connectWalletButton: document.getElementById('connect-wallet-button'),
@@ -69,50 +69,50 @@ export function cacheDOMElements() {
 }
 
 /**
- * Updates all UI elements related to the "Blaze" (LP) view.
+ * Updates all UI elements related to the "Party" (LP) view.
  * Reads data from the imported State module.
  * @param {object} dom - The DOM elements object from cacheDOMElements().
  */
-export function updateBlazeryUI(dom) {
-    if (!State.blockchainData.blaze) {
-        console.log('[Blaze] No blaze data available');
+export function updatePartyzoneUI(dom) { // Renamed from 'updateBlazeryUI'
+    if (!State.blockchainData.party) { // Renamed from 'blaze'
+        console.log('[Party] No party data available');
         return;
     }
     
-    console.log('[Blaze] Updating UI');
+    console.log('[Party] Updating UI');
     
-    const userNeedsApproval = State.blockchainData.blaze.userNeedsApproval;
-    const blazeButton = dom.glazery.blazeActionButton;
+    const userNeedsApproval = State.blockchainData.party.userNeedsApproval;
+    const partyButton = dom.pizzeria.blazeActionButton; // ID is blazeActionButton
     
-    if (dom.glazery.blazePrice) {
-        const lpAmount = parseFloat(State.blockchainData.blaze.priceFormatted);
-        dom.glazery.blazePrice.textContent = lpAmount.toFixed(4);
+    if (dom.pizzeria.blazePrice) { // ID is blazePrice
+        const lpAmount = parseFloat(State.blockchainData.party.priceFormatted);
+        dom.pizzeria.blazePrice.textContent = lpAmount.toFixed(4);
     }
     
-    if (dom.glazery.blazeClaimAmount) {
-        const ethAmount = parseFloat(State.blockchainData.blaze.wethAccumulatedFormatted);
-        dom.glazery.blazeClaimAmount.textContent = `${ethAmount.toFixed(6)} ETH`; 
+    if (dom.pizzeria.blazeClaimAmount) { // ID is blazeClaimAmount
+        const ethAmount = parseFloat(State.blockchainData.party.wethAccumulatedFormatted);
+        dom.pizzeria.blazeClaimAmount.textContent = `${ethAmount.toFixed(6)} ETH`; 
     }
     
-    if (dom.glazery.blazeAvailableBalance) {
-        const userLpBalance = parseFloat(State.blockchainData.blaze.userLpBalanceFormatted);
-        dom.glazery.blazeAvailableBalance.textContent = `${userLpBalance.toFixed(4)} LP available`;
+    if (dom.pizzeria.blazeAvailableBalance) { // ID is blazeAvailableBalance
+        const userLpBalance = parseFloat(State.blockchainData.party.userLpBalanceFormatted);
+        dom.pizzeria.blazeAvailableBalance.textContent = `${userLpBalance.toFixed(4)} LP available`;
     }
     
-    if (blazeButton) {
+    if (partyButton) {
         if (userNeedsApproval) {
-            blazeButton.textContent = 'Approve LP';
-            blazeButton.disabled = false;
+            partyButton.textContent = 'Approve LP';
+            partyButton.disabled = false;
         } else {
-            const lpBalance = parseFloat(State.blockchainData.blaze.userLpBalanceFormatted);
-            const lpNeeded = parseFloat(State.blockchainData.blaze.priceFormatted);
+            const lpBalance = parseFloat(State.blockchainData.party.userLpBalanceFormatted);
+            const lpNeeded = parseFloat(State.blockchainData.party.priceFormatted);
             
-            blazeButton.textContent = 'Blaze';
-            blazeButton.disabled = lpBalance < lpNeeded;
+            partyButton.textContent = 'Party'; // Renamed
+            partyButton.disabled = lpBalance < lpNeeded;
         }
     }
     
-    console.log('[Blaze] UI updated successfully');
+    console.log('[Party] UI updated successfully');
 }
 
 /**
@@ -127,58 +127,58 @@ export function updateUI(dom) {
                        State.blockchainData.currentMiner && 
                        State.blockchainData.userAddress.toLowerCase() === State.blockchainData.currentMiner.toLowerCase();
     
-   let kingGlazerDisplay;
+   let headChefDisplay; // Renamed
 
     // Always try to show Farcaster username first
     if (State.blockchainData.currentMinerUsername) {
-        kingGlazerDisplay = `@${State.blockchainData.currentMinerUsername}`;
+        headChefDisplay = `@${State.blockchainData.currentMinerUsername}`;
         // Add "(You)" if it's the current user
         if (userIsMiner) {
-            kingGlazerDisplay += ' (You)';
+            headChefDisplay += ' (You)';
         }
     } else if (userIsMiner) {
-        kingGlazerDisplay = 'You';
+        headChefDisplay = 'You';
     } else if (State.blockchainData.currentMiner && State.blockchainData.currentMiner !== '0x0000000000000000000000000000000000000000') {
         const address = State.blockchainData.currentMiner;
-        kingGlazerDisplay = `${address.slice(0, 6)}...${address.slice(-4)}`;
+        headChefDisplay = `${address.slice(0, 6)}...${address.slice(-4)}`;
     } else {
-        kingGlazerDisplay = 'None';
+        headChefDisplay = 'None';
     }
-    dom.glazery.kingStatus.textContent = kingGlazerDisplay;
+    dom.pizzeria.kingStatus.textContent = headChefDisplay;
 
-    dom.glazery.cps.textContent = State.blockchainData.claimableDonutsFormatted ? formatNumber(State.blockchainData.claimableDonutsFormatted) : '0.00';
-    dom.glazery.baked.textContent = formatTime(State.blockchainData.timeAsMiner || 0);
+    dom.pizzeria.pps.textContent = State.blockchainData.claimablePizzasFormatted ? formatNumber(State.blockchainData.claimablePizzasFormatted) : '0.00'; // Renamed
+    dom.pizzeria.baked.textContent = formatTime(State.blockchainData.timeAsMiner || 0);
     
-    dom.glazery.glazePrice.textContent = `${parseFloat(State.blockchainData.priceInEth || 0).toFixed(6)} ETH`;
+    dom.pizzeria.glazePrice.textContent = `${parseFloat(State.blockchainData.priceInEth || 0).toFixed(6)} ETH`;
     
-    dom.glazery.availableBalance.textContent = `${parseFloat(State.blockchainData.userEthBalanceFormatted || 0).toFixed(4)} ETH available`;
+    dom.pizzeria.availableBalance.textContent = `${parseFloat(State.blockchainData.userEthBalanceFormatted || 0).toFixed(4)} ETH available`;
     
-    if (dom.glazery.blazeAvailableBalance) {
-         dom.glazery.blazeAvailableBalance.textContent = `${parseFloat(State.blockchainData.blaze.userLpBalanceFormatted || 0).toFixed(4)} LP available`;
+    if (dom.pizzeria.blazeAvailableBalance) { // ID
+         dom.pizzeria.blazeAvailableBalance.textContent = `${parseFloat(State.blockchainData.party.userLpBalanceFormatted || 0).toFixed(4)} LP available`; // Renamed
     }
     
-    if (dom.glazery.blazeClaimAmount && State.blockchainData.blaze.wethAccumulatedFormatted) {
-        const claimEth = parseFloat(State.blockchainData.blaze.wethAccumulatedFormatted);
-        dom.glazery.blazeClaimAmount.textContent = `${claimEth.toFixed(6)} ETH`;
+    if (dom.pizzeria.blazeClaimAmount && State.blockchainData.party.wethAccumulatedFormatted) { // ID
+        const claimEth = parseFloat(State.blockchainData.party.wethAccumulatedFormatted); // Renamed
+        dom.pizzeria.blazeClaimAmount.textContent = `${claimEth.toFixed(6)} ETH`;
     }
     
-    if (dom.glazery.glazeDpsDisplay) {
-         dom.glazery.glazeDpsDisplay.textContent = parseFloat(State.blockchainData.currentDpsFormatted || 0).toFixed(2);
+    if (dom.pizzeria.glazeDpsDisplay) { // ID
+         dom.pizzeria.glazeDpsDisplay.textContent = parseFloat(State.blockchainData.currentDpsFormatted || 0).toFixed(2);
     }
 
-    dom.glazery.donutBalance.textContent = `🍩 ${formatNumber(State.blockchainData.userDonutBalanceFormatted || 0)}`;
-    dom.glazery.totalSupply.textContent = `🍩 ${formatNumber(State.blockchainData.totalDonutSupplyFormatted || 0)}`;
+    dom.pizzeria.donutBalance.textContent = `🍕 ${formatNumber(State.blockchainData.userPizzaBalanceFormatted || 0)}`; // Renamed
+    dom.pizzeria.totalSupply.textContent = `🍕 ${formatNumber(State.blockchainData.totalPizzaSupplyFormatted || 0)}`; // Renamed
     
     // Calculate percentage mined (user balance / total supply * 100)
-    const userBalance = parseFloat(State.blockchainData.userDonutBalanceFormatted || 0);
-    const totalSupply = parseFloat(State.blockchainData.totalDonutSupplyFormatted || 0);
+    const userBalance = parseFloat(State.blockchainData.userPizzaBalanceFormatted || 0); // Renamed
+    const totalSupply = parseFloat(State.blockchainData.totalPizzaSupplyFormatted || 0); // Renamed
     const percentageMined = totalSupply > 0 ? (userBalance / totalSupply * 100) : 0;
-    dom.glazery.currentDps.textContent = `${percentageMined.toFixed(4)}%`;
+    dom.pizzeria.currentDps.textContent = `${percentageMined.toFixed(4)}%`;
     
-    dom.glazery.actionButton.textContent = 'Glaze';
+    dom.pizzeria.actionButton.textContent = 'Bake'; // Renamed
     
     if (dom.modalInfo.totalSupply) {
-        dom.modalInfo.totalSupply.textContent = `🍩 ${formatNumber(State.blockchainData.totalDonutSupplyFormatted || 0)}`;
+        dom.modalInfo.totalSupply.textContent = `🍕 ${formatNumber(State.blockchainData.totalPizzaSupplyFormatted || 0)}`; // Renamed
         dom.modalInfo.nextHalving.textContent = formatTime(State.blockchainData.secondsUntilHalving || 0);
         
         const minerDisplay = State.blockchainData.currentMiner 
@@ -189,28 +189,28 @@ export function updateUI(dom) {
 }
 
 /**
- * Toggles between the Glaze and Blaze views.
+ * Toggles between the Bake and Party views.
  * @param {object} dom - The DOM elements object.
  * @param {function} playSoundEffect - The function to call for audio.
  * @param {object} composer - The Three.js EffectComposer.
  */
 export function toggleView(dom, playSoundEffect, composer) {
     playSoundEffect('crunch');
-    State.uiState.isGlazeView = !State.uiState.isGlazeView;
+    State.uiState.isBakeView = !State.uiState.isBakeView; // Renamed
     
-    if (State.uiState.isGlazeView) {
-        dom.glazery.glazeContainer.classList.remove('hidden');
-        dom.glazery.blazeContainer.classList.add('hidden');
-        dom.glazery.toggleButton.textContent = '🧊';
-        dom.glazery.rainContainer.classList.remove('blaze-active');
+    if (State.uiState.isBakeView) { // Renamed
+        dom.pizzeria.glazeContainer.classList.remove('hidden'); // ID
+        dom.pizzeria.blazeContainer.classList.add('hidden'); // ID
+        dom.pizzeria.toggleButton.textContent = '🧊';
+        dom.pizzeria.rainContainer.classList.remove('party-active'); // Renamed
         if (composer) {
             composer.enabled = false;
         }
     } else {
-        dom.glazery.glazeContainer.classList.add('hidden');
-        dom.glazery.blazeContainer.classList.remove('hidden');
-        dom.glazery.toggleButton.textContent = '🔥';
-        dom.glazery.rainContainer.classList.add('blaze-active');
+        dom.pizzeria.glazeContainer.classList.add('hidden'); // ID
+        dom.pizzeria.blazeContainer.classList.remove('hidden'); // ID
+        dom.pizzeria.toggleButton.textContent = '🔥';
+        dom.pizzeria.rainContainer.classList.add('party-active'); // Renamed
         if (composer) {
             composer.enabled = true;
         }
