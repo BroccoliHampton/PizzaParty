@@ -65,19 +65,39 @@ async function fetchGameState(userAddress = null) {
         const data = await response.json();
         console.log('[Blockchain] Data received:', data);
         
-        Object.assign(State.blockchainData, data);
-        
-        if (data.blaze) {
-            Object.assign(State.blockchainData.blaze, data.blaze, {
+        // Map donut data to pizza data
+        const mappedData = {
+            ...data,
+            userPizzaBalance: data.userDonutBalance,
+            userPizzaBalanceFormatted: data.userDonutBalanceFormatted,
+            claimablePizzas: data.claimableDonuts,
+            claimablePizzasFormatted: data.claimableDonutsFormatted,
+            totalPizzaSupply: data.totalDonutSupply,
+            totalPizzaSupplyFormatted: data.totalDonutSupplyFormatted,
+            party: data.blaze ? { // Map blaze to party
+                ...data.blaze,
                 userNeedsApproval: data.blaze.userNeedsApproval !== undefined ? data.blaze.userNeedsApproval : true
-            });
+            } : State.blockchainData.party // Ensure party object exists
+        };
+        
+        // Clean up old donut/blaze keys
+        delete mappedData.userDonutBalance;
+        delete mappedData.userDonutBalanceFormatted;
+        delete mappedData.claimableDonuts;
+        delete mappedData.claimableDonutsFormatted;
+        delete mappedData.totalDonutSupply;
+        delete mappedData.totalDonutSupplyFormatted;
+        delete mappedData.blaze;
 
-            console.log('[Blockchain] Blaze data loaded:', State.blockchainData.blaze);
+        Object.assign(State.blockchainData, mappedData);
+        
+        if (State.blockchainData.party) {
+            console.log('[Blockchain] Party data loaded:', State.blockchainData.party);
         }
         
         try {
             UI.updateUI(dom);
-            UI.updateBlazeryUI(dom);
+            UI.updatePartyzoneUI(dom); // Renamed
         } catch (renderError) {
             console.error('[Rendering Error] Failed to update UI after fetch (WASM crash likely):', renderError.message);
             return;
@@ -91,11 +111,11 @@ async function fetchGameState(userAddress = null) {
 }
 
 /**
- * Prepares and sends the "Glaze" transaction.
+ * Prepares and sends the "Bake" transaction.
  */
-async function openGlazeFrame() {
+async function openBakeFrame() { // Renamed
     console.log('[Blockchain] Starting transaction...');
-    Scene.setDonutSpinSpeed(0.5);
+    Scene.setPizzaSpinSpeed(0.5); // Renamed
     
     try {
         const address = State.blockchainData.userAddress;
@@ -154,7 +174,7 @@ async function openGlazeFrame() {
  */
 async function sendApprovalTransaction(address) {
     try {
-        console.log('[Blaze] Fetching approval transaction data...');
+        console.log('[Party] Fetching approval transaction data...');
         
         const approvalResponse = await fetch(`${API_BASE_URL}/api/approve-lp?player=${address}`, {
             method: 'GET',
@@ -167,9 +187,9 @@ async function sendApprovalTransaction(address) {
         }
         
         const txData = await approvalResponse.json();
-        console.log('[Blaze] Approval transaction data received:', txData);
+        console.log('[Party] Approval transaction data received:', txData);
         
-        console.log('[Blaze] Sending approval transaction...');
+        console.log('[Party] Sending approval transaction...');
         
         const txParams = {
             from: address,
@@ -180,32 +200,32 @@ async function sendApprovalTransaction(address) {
         
         const txHash = await sendTxWithRetry(txParams);
         
-        console.log('[Blaze] Approval transaction sent:', txHash);
-        console.log('Approval submitted! Now you can Blaze.');
+        console.log('[Party] Approval transaction sent:', txHash);
+        console.log('Approval submitted! Now you can Party.');
         
-        State.blockchainData.blaze.userNeedsApproval = false;
-        UI.updateBlazeryUI(dom);
+        State.blockchainData.party.userNeedsApproval = false;
+        UI.updatePartyzoneUI(dom); // Renamed
         
         setTimeout(() => {
-            console.log('[Blaze] Refreshing after approval...');
+            console.log('[Party] Refreshing after approval...');
             fetchGameState(State.blockchainData.userAddress);
         }, 3000);
         
     } catch (error) {
-        console.error('[Blaze] Approval error:', error);
+        console.error('[Party] Approval error:', error);
         console.log(`Approval failed: ${error.message}`);
         alert(`Approval failed: ${error.message}`);
     }
 }
 
 /**
- * Prepares and sends the "Blaze" (buy) transaction.
+ * Prepares and sends the "Party" (buy) transaction.
  */
 async function sendBuyTransaction(address) {
     try {
-        console.log('[Blaze] Fetching buy transaction data...');
+        console.log('[Party] Fetching buy transaction data...');
         
-        const buyResponse = await fetch(`${API_BASE_URL}/api/blaze-transaction?player=${address}`, {
+        const buyResponse = await fetch(`${API_BASE_URL}/api/blaze-transaction?player=${address}`, { // API endpoint is still 'blaze'
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             mode: 'cors'
@@ -216,9 +236,9 @@ async function sendBuyTransaction(address) {
         }
         
         const txData = await buyResponse.json();
-        console.log('[Blaze] Buy transaction data received:', txData);
+        console.log('[Party] Buy transaction data received:', txData);
         
-        console.log('[Blaze] Sending buy transaction...');
+        console.log('[Party] Sending buy transaction...');
         
         const txParams = {
             from: address,
@@ -229,16 +249,16 @@ async function sendBuyTransaction(address) {
         
         const txHash = await sendTxWithRetry(txParams);
         
-        console.log('[Blaze] Buy transaction sent:', txHash);
+        console.log('[Party] Buy transaction sent:', txHash);
         console.log('Buy transaction submitted! You received ETH.');
         
         setTimeout(() => {
-            console.log('[Blaze] Refreshing after buy...');
+            console.log('[Party] Refreshing after buy...');
             fetchGameState(State.blockchainData.userAddress);
         }, 3000);
         
     } catch (error) {
-        console.error('[Blaze] Buy transaction error:', error);
+        console.error('[Party] Buy transaction error:', error);
         console.log(`Buy transaction failed: ${error.message}`);
         alert(`Buy transaction failed: ${error.message}`);
     }
@@ -328,49 +348,49 @@ export async function handleConnectWallet() {
 }
 
 /**
- * Public handler for the Glaze button click.
+ * Public handler for the Bake button click.
  */
-export function handleGlazeClick() {
-    console.log('[Blockchain] Glaze button clicked');
-    openGlazeFrame();
+export function handleBakeClick() { // Renamed
+    console.log('[Blockchain] Bake button clicked'); // Renamed
+    openBakeFrame(); // Renamed
 }
 
 /**
- * Public handler for the Blaze button click.
+ * Public handler for the Party button click.
  */
-export async function handleBlazeClick() {
-    console.log('[Blaze] Blaze button clicked');
-    Scene.setDonutSpinSpeed(0.5);
+export async function handlePartyClick() { // Renamed
+    console.log('[Party] Party button clicked'); // Renamed
+    Scene.setPizzaSpinSpeed(0.5); // Renamed
     
     try {
         const address = State.blockchainData.userAddress;
         
         if (!address) {
-            console.log('[Blaze] No wallet connected');
+            console.log('[Party] No wallet connected');
             alert('Please connect your wallet first');
             return;
         }
         
-        if (State.blockchainData.blaze.userNeedsApproval) {
-            console.log('[Blaze] Needs approval - calling approve transaction');
+        if (State.blockchainData.party.userNeedsApproval) { // Renamed
+            console.log('[Party] Needs approval - calling approve transaction');
             await sendApprovalTransaction(address);
             return;
         }
         
-        const lpBalance = parseFloat(State.blockchainData.blaze.userLpBalanceFormatted);
-        const lpNeeded = parseFloat(State.blockchainData.blaze.priceFormatted);
+        const lpBalance = parseFloat(State.blockchainData.party.userLpBalanceFormatted); // Renamed
+        const lpNeeded = parseFloat(State.blockchainData.party.priceFormatted); // Renamed
         
         if (lpBalance < lpNeeded) {
-            console.log('[Blaze] Insufficient LP balance');
+            console.log('[Party] Insufficient LP balance');
             console.log(`Need ${lpNeeded.toFixed(4)} LP but only have ${lpBalance.toFixed(4)} LP`);
             alert(`Insufficient LP balance. Need ${lpNeeded.toFixed(4)} LP but only have ${lpBalance.toFixed(4)} LP`);
             return;
         }
         
-        console.log('[Blaze] Sending buy transaction...');
+        console.log('[Party] Sending buy transaction...');
         await sendBuyTransaction(address);
         
     } catch (error) {
-        console.error('[Blaze] Error:', error);
+        console.error('[Party] Error:', error);
     }
 }
