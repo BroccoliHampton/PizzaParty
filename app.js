@@ -27,15 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.connectWalletButton.onclick = Blockchain.handleConnectWallet;
     
     // Blockchain buttons
-    dom.glazery.actionButton.onclick = Blockchain.handleGlazeClick;
-    dom.glazery.blazeActionButton.onclick = Blockchain.handleBlazeClick;
+    dom.pizzeria.actionButton.onclick = Blockchain.handleBakeClick; // Renamed
+    dom.pizzeria.blazeActionButton.onclick = Blockchain.handlePartyClick; // Renamed
 
     // Audio buttons
     dom.musicToggleButton.onclick = () => Audio.toggleMusic(dom);
     dom.sfxToggleButton.onclick = () => Audio.toggleSfx(dom);
     
     // UI/View buttons
-    dom.glazery.toggleButton.onclick = () => UI.toggleView(dom, Audio.playSoundEffect, Scene.getComposer());
+    dom.pizzeria.toggleButton.onclick = () => UI.toggleView(dom, Audio.playSoundEffect, Scene.getComposer());
     dom.darkModeToggleButton.onclick = () => UI.toggleDarkMode(dom, Audio.playSoundEffect);
 
     // Info Modal buttons
@@ -44,17 +44,17 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.infoModalOverlay.onclick = () => UI.hideInfoModal(dom);
 
     // 3D Scene control buttons
-    dom.glazery.glazeColorButton.onclick = () => {
+    dom.pizzeria.sauceColorButton.onclick = () => { // Renamed
         Audio.playSoundEffect('crunch');
-        Scene.changeGlazeColor();
+        Scene.changeSauceColor(); // Renamed
     };
-    dom.glazery.sprinkleColorButton.onclick = () => {
+    dom.pizzeria.toppingColorButton.onclick = () => { // Renamed
         Audio.playSoundEffect('crunch');
-        Scene.changeSprinkleColor();
+        Scene.changeToppingColor(); // Renamed
     };
-    dom.glazery.donutBaseColorButton.onclick = () => {
+    dom.pizzeria.crustColorButton.onclick = () => { // Renamed
         Audio.playSoundEffect('crunch');
-        Scene.changeDonutBaseColor();
+        Scene.changeCrustColor(); // Renamed
     };
 
     // 4. Start the application logic (connect wallet, fetch data, etc.)
